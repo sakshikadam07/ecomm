@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="section-content padding-y bg" >
+<div class="container">
+
+<!-- ============================ COMPONENT 1 ================================= -->
+
+<div class="row" >
+	<aside class="col-lg-8">
+    <div class="card">
+     <h5 class="card-header">Billing Address</h5>
+     <div class="card-body">
+       <p class="card-text">{{order.full_name}}</p>
+			 <p class="card-text">{{order.full_add}}</p>
+			 <p class="card-text">{{order.city}}, {{order.state}} </p>
+			 <p class="card-text">{{order.country}}</p>
+     </div>
+   </div>
+
+	 <div class="card">
+    <h5 class="card-header"> Contact Details</h5>
+    <div class="card-body">
+      <p class="card-text">{{order.phone}}</p>
+			<p class="card-text">{{order.email}}</p>
+    </div>
+   </div>
+
+	 <div class="card">
+		<h5 class="card-header">Order Note</h5>
+		<div class="card-body">
+			<p class="card-text">{{order.order_note}}</p>
+		</div>
+	</div>
+
+   <div class="card">
+    <h5 class="card-header">Payment Method</h5>
+    <div class="card-body">
+      <p class="card-text">Cash On Delivery </p>
+    </div>
+  </div>
+
+	<div class="card">
+		<div class="card-body">
+	 	<a href="{% url 'home' %}" class="btn btn-info btn-block"> Continue Shopping </a>
+		</div>
+ </div>
+
+
+	</aside> <!-- col.// -->
+
+</div> <!-- row.// -->
+
+<!-- ============================ COMPONENT 1 END .// ================================= -->
+
+</div> <!-- container .//  -->
+</section>
+
+
+
+{% endblock %}

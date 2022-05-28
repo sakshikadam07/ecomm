@@ -1,0 +1,104 @@
+var arrProdEnv = [
+    'http://www.apollo247.com',
+    'https://www.apollo247.com',
+    'http://www.apollopharmacy.in',
+    'https://www.apollopharmacy.in',
+    'https://teams.microsoft.com',
+    'http://teams.microsoft.com',
+    
+  ];
+function createLocalCookie(o, e, a, t) {
+  var n = a
+    ? ((n = new Date()).setTime(n.getTime() + 24 * a * 60 * 60 * 1e3),
+      '; expires=' + n.toGMTString())
+    : '';
+  'www.apollo247.com' == window.location.host && (t = '.apollo247.com'),
+    'www.apollopharmacy.in' == window.location.host &&
+      (t = '.apollopharmacy.in'),
+    'localhost' === window.location.hostname && (t = 'localhost'),
+    (document.cookie =
+      o +
+      '=' +
+      e +
+      n +
+      '; path=/; SameSite=None; Secure;' +
+      (t ? 'domain=' + t : NaN + window.location.host));
+}
+function getLocalCookie(o) {
+  for (
+    var e = o + '=', a = decodeURIComponent(document.cookie).split(';'), t = 0;
+    t < a.length;
+    t++
+  ) {
+    for (var n = a[t]; ' ' == n.charAt(0); ) n = n.substring(1);
+    if (0 == n.indexOf(e)) return n.substring(e.length, n.length);
+  }
+  return '';
+}
+
+var iframeEl,
+  iFrameOrigin = 'https://aphbridge.apollo247.in',
+  iframeSource = iFrameOrigin + '/iFrame-window-prod.html',
+  iframe = document.createElement('iframe'); // <iframe>
+function handleMessage(o) {
+  if (o.origin === iFrameOrigin) {
+    if (o.data.isReload)
+      return popupWindow && popupWindow.close(), void location.reload();
+    o.data.aphToken ||
+      (createLocalCookie('aph_token', '', -1),
+      createLocalCookie('aph_token', '', -1, 'apollo247.com'),
+      createLocalCookie('aph_token', '', -1, 'apollopharmacy.in'),
+      createLocalCookie('aph_mob', '', -1),
+      createLocalCookie('aph_mob', '', -1, 'apollo247.com'),
+      createLocalCookie('aph_mob', '', -1, 'apollopharmacy.in')),
+      o.data.aphToken &&
+        (createLocalCookie('aph_token', o.data.aphToken, 365),
+        createLocalCookie('aph_mob', o.data.aphMob, 365));
+  }
+}
+function checkaphTokenInParent() {
+  iframeEl && iframeEl.contentWindow && iframeEl.contentWindow.postMessage('', '*');
+}
+function updateUserDataInCookie(o) {
+  (token = o.aphToken || ''),
+    (mobile = o.aphMob || ''),
+    iframeEl && iframeEl.contentWindow && iframeEl.contentWindow.postMessage(
+      { aphToken: token, aphMob: mobile },
+      '*'
+    );
+}
+function removeUserDataInCookie(o) {
+  createLocalCookie('aph_token', '', -1, (o = o || '')),
+    createLocalCookie('aph_mob', '', -1, o),
+    iframeEl && iframeEl.contentWindow && iframeEl.contentWindow.postMessage({ aphToken: '', aphMob: '' }, '*');
+}
+
+iframe.setAttribute('src', iframeSource), // <iframe src="https://aphbridge.apollo247.in/iFrame-window-prod.html">
+  iframe.setAttribute('id', 'the_iframe'), // <iframe id="the_iframe" src="https://aphbridge.apollo247.in/iFrame-window-prod.html">
+  (iframe.style.width = '450px'),
+  (iframe.style.height = '200px'),
+  (iframe.style.display = 'none'),
+  (document.onreadystatechange = function () {
+    iframeEl ||
+      (document.body.appendChild(iframe),
+      ((iframeEl = document.getElementById('the_iframe')).onload = function () {
+        0 <= location.search.indexOf('file=') &&
+        0 <= location.search.indexOf('.doc') &&
+        0 <= location.search.indexOf('param')
+          ? updateUserDataInCookie({
+              aphToken: getLocalCookie('aph_token'),
+              aphMob: getLocalCookie('aph_mob'),
+            })
+          : (iframeEl && iframeEl.contentWindow && iframeEl.contentWindow.postMessage(location.origin, '*'),
+            setTimeout(function () {
+              '' !== getLocalCookie('aph_token') &&
+                updateUserDataInCookie({
+                  aphToken: getLocalCookie('aph_token'),
+                  aphMob: getLocalCookie('aph_mob'),
+                });
+            }, 100));
+      }));
+  }),
+  window.addEventListener
+    ? window.addEventListener('message', handleMessage)
+    : window.attachEvent('onmessage', handleMessage);
